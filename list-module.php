@@ -19,7 +19,7 @@ function getDataAndReturnJson($contentOriginal){
     $content = array();
     preg_match_all($expression,$contentOriginal, $content);
     $links = getAllLinksAndFetchArray($contentOriginal);
-    $response = getSanitizedResponse($content[1],$links);
+    $response = getSanitizedResponse($content[0],$links);
     return $response;
 }
 function  getAllLinksAndFetchArray($content){
@@ -27,58 +27,76 @@ function  getAllLinksAndFetchArray($content){
     return $links;
 }
 function getSanitizedResponse($content, $links){
-    $importantLines = array();
-    $control = 0;
-    for($i=0; $i< count($content); $i++){
-        $line = replaceEspecialChars($content[$i]);
-        if(strlen($line)>0){
-            if(strlen($line)==1){
-                $importantLinesPreviousIndex = $control -1;
-                $nextLine = (isset($content[$i+1])===TRUE? $content[$i+1]: '');
-                $previousLine = (isset($importantLines[$importantLinesPreviousIndex])===TRUE? $importantLines[$importantLinesPreviousIndex]: 'UNdefined');
-                $importantLines[$importantLinesPreviousIndex] = $previousLine.'; '. replaceEspecialChars($nextLine);
-                $content[$i+1] = ''; 
-                $control++;
-            }else{
-                $importantLines[$control] = $line;
-                $control++;
-            }
-            
-            
-        }   
-    }
     
-
-    $controller =0;
-    $jsonResponse = array();
-
-    $linesResponse = array();
-
-    foreach($importantLines as $line){
-        $linesResponse[] = $line; 
-    }
-   
-    for($index=0; $index<intval(count($importantLines)/4); $index++){
-        
-        $linkControllerAndId = explode('/', $links[$index]);
-
-
-
-        $jsonResponse[] = array('author'=>$linesResponse[$controller],
-                                'title'=>$linesResponse[$controller+1],
-                                'date'=> $linesResponse[$controller+2],
-                                'link'=>'https://pantheon.ufrj.br/handle/'.$links[$index],
-                                'controller'=> $linkControllerAndId[0],
-                                'id'=> $linkControllerAndId[1],
-                                'type'=>$linesResponse[$controller+3]);
-        $controller += 4;
-    }
+    $contentWithoutEspecialChars = replaceEspecialChars($content);
+    $contentWithtoutBlankLines = removeBlankLines($contentWithoutEspecialChars);
+    $contentWithAuthorsSet = matchAllAuthorsIntoOneString($contentWithtoutBlankLines);
+    $response = fetchAllDataIntoAJsonArray($contentWithAuthorsSet, $links);
     
-    return $jsonResponse;
+    return $response;
 
 }
+
 function replaceEspecialChars($string){
     return str_replace(array('&#x20', '>', ';'), array(' ', '', ''), $string);
+}
+function removeBlankLines($content){
+    $withoutBlankLines = array();
+    foreach($content as $line){
+        if(strlen($line)>0){
+            $withoutBlankLines[] = $line;
+        }
+    }
+
+    return $withoutBlankLines;
+}
+function matchAllAuthorsIntoOneString($content){
+    $contentAuthorsSet = array();
+    $controller = 0;
+
+    for($index=0; $index<count($content); $index++){
+        $line = $content[$index];
+
+        if(strlen($line)==1){
+            $previousIndexContent = $index -1 ;
+            $nextIndexContent = $index +1 ;
+
+            $previousIndexAuthor = $controller -1 ;
+            $nextIndexAuthor = $controller+1;
+
+            $fixed = $contentAuthorsSet[$previousIndexAuthor].'; '.$content[$nextIndexContent];
+            $contentAuthorsSet[$previousIndexAuthor] = $fixed;
+            array_splice($content, $nextIndexContent,1);
+
+            
+        }else{
+            $contentAuthorsSet[$controller] = $line;
+            $controller++;
+        }
+    }
+    return $contentAuthorsSet;
+}
+
+function fetchAllDataIntoAJsonArray($content, $links){
+    $jsonResponse = array();
+    $controller =0;
+    for($index=0; $index< intval(count($content)/4); $index++){
+        $authorIndex = $controller;
+        $titleIndex = $controller +1;
+        $dateIndex = $controller+2;
+        $typeIndex = $controller+3;
+        
+        $linkControllerAndId = explode('/',$links[$index]);
+        $jsonResponse[] = array('author'=>$content[$authorIndex],
+                                'title'=>$content[$titleIndex],
+                                'type'=>$content[$typeIndex],
+                                'date'=>$content[$dateIndex],
+                                'link'=>'https://pantheon.ufrj.br/handle/'.$links[$index],
+                                'linkController'=>$linkControllerAndId[0],
+                                'linkId'=>$linkControllerAndId[1]);
+        $controller+=4;
+    }
+    return $jsonResponse;
 }
 function cURL_Setup($set){
     curl_setopt($set, CURLOPT_HTTPHEADER,
