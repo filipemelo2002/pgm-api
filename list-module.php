@@ -1,5 +1,7 @@
 <?php
 
+require './string-utils.php';
+require './cURL-setup.php';
 
 function requestListData($query){
 
@@ -98,49 +100,5 @@ function fetchAllDataIntoAJsonArray($content, $links){
     }
     return $jsonResponse;
 }
-function cURL_Setup($set){
-    curl_setopt($set, CURLOPT_HTTPHEADER,
-        array(
-            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0",
-            "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
-            "Content-Type: application/x-www-form-urlencoded",
-            "DNT: 1",
-            "Connection: keep-alive"
-              ));
-
-     
-       curl_setopt($set, CURLOPT_SSL_VERIFYPEER, false);
-       curl_setopt($set, CURLOPT_SSL_VERIFYHOST, false);
-       curl_setopt($set, CURLOPT_FOLLOWLOCATION, false);
-      curl_setopt($set, CURLOPT_RETURNTRANSFER, true);
-       curl_setopt($set, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt($set, CURLOPT_TIMEOUT, 20);      
-}
 
 
-function get_string_between($string, $start, $end){
-    $string = ' ' . $string;
-    $ini = strpos($string, $start);
-    if ($ini == 0) return '';
-    $ini += strlen($start);
-    $len = strpos($string, $end, $ini) - $ini;
-    return substr($string, $ini, $len);
-}
-
-function getContents($str, $startDelimiter, $endDelimiter) {
-    $contents = array();
-    $startDelimiterLength = strlen($startDelimiter);
-    $endDelimiterLength = strlen($endDelimiter);
-    $startFrom = $contentStart = $contentEnd = 0;
-    while (false !== ($contentStart = strpos($str, $startDelimiter, $startFrom))) {
-      $contentStart += $startDelimiterLength;
-      $contentEnd = strpos($str, $endDelimiter, $contentStart);
-      if (false === $contentEnd) {
-        break;
-      }
-      $contents[] = substr($str, $contentStart, $contentEnd - $contentStart);
-      $startFrom = $contentEnd + $endDelimiterLength;
-    }
-  
-    return $contents;
-  }
