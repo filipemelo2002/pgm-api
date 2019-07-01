@@ -17,6 +17,17 @@ function endsWith($haystack, $needle)
 
     return (substr($haystack, -$length) === $needle);
 }
+function removeBlankLines($content){
+  $withoutBlankLines = array();
+  foreach($content as $line){
+      if(strlen($line)>0){
+          $withoutBlankLines[] = $line;
+      }
+  }
+
+  return $withoutBlankLines;
+}
+
 function getContents($str, $startDelimiter, $endDelimiter) {
     $contents = array();
     $startDelimiterLength = strlen($startDelimiter);

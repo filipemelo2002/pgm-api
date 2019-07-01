@@ -36,16 +36,6 @@ function replaceEspecialChars($string){
     return str_replace(array('&#x20', '>', ';', '&nbsp'), array(' ', '', '', ''), $string);
 }
 
-function removeBlankLines($content){
-    $withoutBlankLines = array();
-    foreach($content as $line){
-        if(strlen($line)>0){
-            $withoutBlankLines[] = $line;
-        }
-    }
-
-    return $withoutBlankLines;
-}
 
 function fetchAllDataIntoAJsonArray($content){
     $reponse = array();
@@ -135,24 +125,6 @@ function getSanitizedJsonKey($jsonKey){
             return 'unknown';
 
     }
-}
-function getAllTitlesPositions($content){
-    $positions = array();
-    for($index=0; $index<count($content); $index++){
-        if(endsWith($content[$index],':')){
-            $positions[] = $index;
-        }
-    }
-    return $positions;
-}
-function getAllContentPositions($content){
-    $positions = array();
-    for($index=0; $index<count($content); $index++){
-        if(!(endsWith($content[$index],':'))){
-            $positions[] = $index;
-        }
-    }
-    return $positions;
 }
 
 function fetchFileUrl($content){
