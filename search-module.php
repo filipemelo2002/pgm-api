@@ -9,22 +9,16 @@ function requestData($linkController, $linkId){
     cURL_Setup($curlSetup);
 
     $response = curl_exec($curlSetup);
-
     $tableMainData = get_string_between($response, '<table class="table itemDisplayTable">', '</table>');
-
     $tableWithFile = get_string_between($response, '<table class="table panel-body">', '</a>');
-
     $urlFile = fetchFileUrl($tableWithFile);
-    //echo json_encode(array('fileUrl'=>$urlFile));
-
     $response = fetchAllDataAndReturnJson($tableMainData, $urlFile);
-    echo json_encode($reponse);
+    echo json_encode($response);
 }
 function fetchAllDataAndReturnJson($contentOriginal, $urlFile){
     $expression = "/(?=>)(.*?)(?=<)/";
     $content = array();
     preg_match_all($expression,$contentOriginal, $content);
-
     $contentWithoutEspecialChars = replaceEspecialChars($content[0]);
     $contentWithoutBlankLines = removeBlankLines($contentWithoutEspecialChars);
     $responseJson = fetchAllDataIntoAJsonArray($contentWithoutBlankLines);
@@ -41,9 +35,7 @@ function fetchAllDataIntoAJsonArray($content){
     $reponse = array();
     $matchedContents = fetchDataIntoAnArray($content);
     $finalResponse = turnArrayIntoAJsonArray($matchedContents);
-    echo json_encode($finalResponse);
-    exit();
-    return $matchedContents;
+    return $finalResponse;
 }
 
 
