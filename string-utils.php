@@ -8,6 +8,15 @@ function get_string_between($string, $start, $end){
     return substr($string, $ini, $len);
 }
 
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    if ($length == 0) {
+        return true;
+    }
+
+    return (substr($haystack, -$length) === $needle);
+}
 function getContents($str, $startDelimiter, $endDelimiter) {
     $contents = array();
     $startDelimiterLength = strlen($startDelimiter);

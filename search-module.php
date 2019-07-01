@@ -155,22 +155,6 @@ function getAllContentPositions($content){
     return $positions;
 }
 
-
-function startsWith($haystack, $needle)
-{
-     $length = strlen($needle);
-     return (substr($haystack, 0, $length) === $needle);
-}
-
-function endsWith($haystack, $needle)
-{
-    $length = strlen($needle);
-    if ($length == 0) {
-        return true;
-    }
-
-    return (substr($haystack, -$length) === $needle);
-}
 function fetchFileUrl($content){
     return "https://pantheon.ufrj.br/".get_string_between($content, 'href="','"');
 }
