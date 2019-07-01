@@ -1,7 +1,7 @@
 <?php
 
-require './string-utils.php';
-require './cURL-setup.php';
+require_once './string-utils.php';
+require_once './cURL-setup.php';
 
 function requestListData($query){
 
