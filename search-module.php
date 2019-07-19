@@ -13,6 +13,7 @@ function requestData($linkController, $linkId){
     $tableWithFile = get_string_between($response, '<table class="table panel-body">', '</a>');
     $urlFile = fetchFileUrl($tableWithFile);
     $response = fetchAllDataAndReturnJson($tableMainData, $urlFile);
+    $response['arquivo'] = $urlFile;
     echo json_encode($response);
 }
 function fetchAllDataAndReturnJson($contentOriginal, $urlFile){

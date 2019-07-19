@@ -1,6 +1,7 @@
 <?php
 
 header('content-type: application/json');
+header("Access-Control-Allow-Origin: *");
 ini_set('max_execution_time', 0);
 
 

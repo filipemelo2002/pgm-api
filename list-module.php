@@ -42,16 +42,7 @@ function getSanitizedResponse($content, $links){
 function replaceEspecialChars($string){
     return str_replace(array('&#x20', '>', ';'), array(' ', '', ''), $string);
 }
-function removeBlankLines($content){
-    $withoutBlankLines = array();
-    foreach($content as $line){
-        if(strlen($line)>0){
-            $withoutBlankLines[] = $line;
-        }
-    }
 
-    return $withoutBlankLines;
-}
 function matchAllAuthorsIntoOneString($content){
     $contentAuthorsSet = array();
     $controller = 0;
